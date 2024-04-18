@@ -5,6 +5,7 @@
 #include <sstream>
 #include <vector>
 #include <cctype>  // For std::tolower
+#include <queue>
 
 #include "Trie.h"
 
@@ -113,6 +114,51 @@ bool Trie::isPrefixExist(TrieNode* root, string& key) {
 
     // Prefix exist in the Trie
     return true;
+}
+
+vector<Book*> Trie::prefixSearch(TrieNode* root, string& key) {
+    // Initialize the currentNode pointer
+    TrieNode* currentNode = root;
+
+    vector<Book*> resBooks;
+
+    // Iterate across the length of the string
+    for (auto letter : key) {
+
+        // Check if the node exist for the current
+        // character in the Trie.
+        if (currentNode->children[letter - 'a'] == nullptr) {
+
+            return resBooks;    //empty
+        }
+
+        // Move the currentNode pointer to the already
+        // existing node for current character.
+        currentNode = currentNode->children[letter - 'a'];
+    }
+
+    // Make queue to bfs every book from currentNode
+    queue<TrieNode*> qBooks;
+    qBooks.push(currentNode);
+
+
+
+    while (!qBooks.empty()) {
+        currentNode = qBooks.front();
+        qBooks.pop();
+
+        // print current books
+        if (currentNode->wordCount > 0) {
+            for (auto *book : currentNode->books)
+                resBooks.push_back(book);
+        }
+        for (auto & i : currentNode->children) {
+            if (i != nullptr)
+                qBooks.push(i);
+        }
+    }
+
+    return resBooks;
 }
 
 bool Trie::search_key(TrieNode* root, string& key){

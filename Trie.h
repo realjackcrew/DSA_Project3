@@ -50,6 +50,7 @@ public:
     void insert(TrieNode* root, string& key, Book *book);   // insert key
     bool isPrefixExist(TrieNode* root, string& key);    // check if prefix is there
     bool search_key(TrieNode* root, string& key);   // search is work is actually there
+    vector<Book*> prefixSearch(TrieNode* root, string& key);
 
     void parseBookCSV(string& filePath);   // iterates through CSV
     void print();
