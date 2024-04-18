@@ -5,18 +5,28 @@
 int main() {
     std::cout << "Hello, World!" << std::endl;
 
+    // create Trie object
     Trie booksTest;
+
+    // parse txt file by Book Title (tab delimiter)
+    // Could implement parsing by other attributes ex. author or id
     string filePath = "GoogleBookAPIDataset.txt";
     booksTest.parseBookCSV(filePath);
 
+    // check if prefix exist (bool)
     string pre = "harry";
-    cout << "harry prefix: " << booksTest.isPrefixExist(booksTest.root, pre) << endl;
+    bool harryExist = booksTest.isPrefixExist(pre);
+    cout << "harry prefix exists: " << harryExist << endl << endl;
 
-    cout << "PRINTING BOOKS" << endl;
-    vector<Book*> b = booksTest.prefixSearch(booksTest.root, pre);
+    if (harryExist) {
+        cout << "PRINTING BOOKS" << endl;
+        vector<Book*> b = booksTest.prefixSearch(pre);
 
-    for (auto *book : b)
-        book->print();
+        for (auto *book : b)
+            book->print();
+    } else {
+        cout << "NO BOOKS WITH PREFIX: " << pre << endl;
+    }
 
     return 0;
 }

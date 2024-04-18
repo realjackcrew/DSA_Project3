@@ -9,14 +9,15 @@
 
 #include "Trie.h"
 
+// Converts string into only 26 char word for Trie ex. "Harry Potter" -> "harrypotter"
 std::string toLowerAndRemoveNonLetters(const std::string& input) {
     std::string output = input;
 
-    // Transform all characters to lowercase
+    // Transform all chars to lowercase
     std::transform(output.begin(), output.end(), output.begin(),
                    [](unsigned char c) { return std::tolower(c); });
 
-    // Remove characters that are not lowercase letters
+    // Remove chars that are not lowercase letters
     output.erase(std::remove_if(output.begin(), output.end(),
                                 [](char c) { return !std::islower(c); }),
                  output.end());
@@ -24,34 +25,25 @@ std::string toLowerAndRemoveNonLetters(const std::string& input) {
     return output;
 }
 
-void Trie::insert(TrieNode *root, string &key, Book *book) {
-    // Initialize the currentNode pointer
-    TrieNode* currentNode = root;
+void Trie::insert(string &key, Book *book) {
+    // Initialize currentNode
+    TrieNode* currentNode = this->root;
 
-    // Iterate across the length of the string
+    // Iterate over each letter in key
     for (auto letter : key) {
 
-        // Check if the node exist for the current
-        // character in the Trie.
+        // Check if node exist for the current letter
         if (currentNode->children[letter - 'a'] == nullptr) {
 
-            // If node for current character does not exist
-            // then make a new node
+            // Make a new node
             TrieNode* newNode = new TrieNode();
-
-            // Keep the reference for the newly created
-            // node.
             currentNode->children[letter - 'a'] = newNode;
         }
-
-        // Now, move the current node pointer to the newly
-        // created node.
+        // Move to next node
         currentNode = currentNode->children[letter - 'a'];
     }
 
-    // Increment the wordEndCount for the last currentNode
-    // pointer this implies that there is a string ending at
-    // currentNode.
+    // Increment word count and add book
     currentNode->wordCount++;
     currentNode->books.push_back(book);
 }
@@ -68,6 +60,7 @@ void Trie::parseBookCSV(string& filePath) {
         Book* book = new Book();
         std::string temp;
 
+        // Assign attributes to book
         std::getline(ss, temp, '\t');
         std::getline(ss, temp, '\t');
         std::getline(ss, book->id, '\t');
@@ -85,63 +78,55 @@ void Trie::parseBookCSV(string& filePath) {
 
         book->print();
 
-        string lowerCase = toLowerAndRemoveNonLetters(book->title);
-        cout << "TEST: " << lowerCase << endl;
+        string lowerCaseBookTitle = toLowerAndRemoveNonLetters(book->title);
 
-        insert(root, lowerCase, book);
+        // Insert Book object into Trie
+        insert(lowerCaseBookTitle, book);
     }
 }
 
-bool Trie::isPrefixExist(TrieNode* root, string& key) {
-    // Initialize the currentNode pointer
-    TrieNode* currentNode = root;
-    
-    // Iterate across the length of the string
+bool Trie::isPrefixExist(string& key) {
+    // Initialize currNode
+    TrieNode* currentNode = this->root;
+
+    // Iterate over each letter in key
     for (auto letter : key) {
 
-        // Check if the node exist for the current
-        // character in the Trie.
+        // Check if node exists
         if (currentNode->children[letter - 'a'] == nullptr) {
-
-            // Given word as a prefix does not exist in Trie
             return false;
         }
 
-        // Move the currentNode pointer to the already
-        // existing node for current character.
+        // Move to next node
         currentNode = currentNode->children[letter - 'a'];
     }
 
-    // Prefix exist in the Trie
+    // Prefix exist in Trie
     return true;
 }
 
-vector<Book*> Trie::prefixSearch(TrieNode* root, string& key) {
-    // Initialize the currentNode pointer
-    TrieNode* currentNode = root;
+vector<Book*> Trie::prefixSearch(string& key) {
+    // Initialize currNode
+    TrieNode* currentNode = this->root;
 
     vector<Book*> resBooks;
 
-    // Iterate across the length of the string
+    // Iterate over each char
     for (auto letter : key) {
 
-        // Check if the node exist for the current
-        // character in the Trie.
+        // Check if node exists
         if (currentNode->children[letter - 'a'] == nullptr) {
 
-            return resBooks;    //empty
+            return resBooks;    // return empty vector
         }
 
-        // Move the currentNode pointer to the already
-        // existing node for current character.
+        // Move to next node
         currentNode = currentNode->children[letter - 'a'];
     }
 
     // Make queue to bfs every book from currentNode
     queue<TrieNode*> qBooks;
     qBooks.push(currentNode);
-
-
 
     while (!qBooks.empty()) {
         currentNode = qBooks.front();
@@ -161,24 +146,19 @@ vector<Book*> Trie::prefixSearch(TrieNode* root, string& key) {
     return resBooks;
 }
 
-bool Trie::search_key(TrieNode* root, string& key){
-    // Initialize the currentNode pointer
-    // with the root node
-    TrieNode* currentNode = root;
+bool Trie::search_key(string& key){
+    // Initialize currNode
+    TrieNode* currentNode = this->root;
 
-    // Iterate across the length of the string
+    // Iterate over ever letter
     for (auto letter : key) {
 
-        // Check if the node exist for the current
-        // character in the Trie.
+        // Check if node exist
         if (currentNode->children[letter - 'a'] == nullptr) {
-
-            // Given word does not exist in Trie
             return false;
         }
 
-        // Move the currentNode pointer to the already 
-        // existing node for current character.
+        // Move to next node
         currentNode = currentNode->children[letter - 'a'];
     }
 
