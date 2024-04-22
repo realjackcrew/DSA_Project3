@@ -3,6 +3,4 @@ project(Project_3A)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Project_3A main.cpp
-        Trie.h
-        Trie.cpp)
+add_executable(Project_3A main.cpp Trie.h Trie.cpp HashTable.h HashTable.cpp)
